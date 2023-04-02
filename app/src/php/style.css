@@ -1,0 +1,75 @@
+/* Global styles */
+
+/* Set the font family, size, and line height for the entire document */
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Set the maximum width of the container to 800 pixels and center it horizontally */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Section styles */
+
+/* Add a margin at the bottom of each section */
+section {
+  margin-bottom: 50px;
+}
+
+/* Set the font size, weight, and margin for each section heading */
+section h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #3b3b3b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Remove bullets and margins from lists in each section */
+section ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Add a margin at the bottom of each list item */
+section li {
+  margin-bottom: 20px;
+  color: #4d4d4d;
+}
+
+/* Footer styles */
+
+/* Center the text and add padding and a background color to the footer */
+footer {
+  text-align: center;
+  padding: 30px;
+  background-color: #f2f2f2;
+  color: #3b3b3b;
+}
+
+/* Media queries */
+
+/* Adjust the container padding and section heading font size for screens with a maximum width of 480 pixels */
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+  
+  section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  section li {
+    margin-bottom: 15px;
+  }
+}

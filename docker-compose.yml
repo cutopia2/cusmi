@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  db:
+    build: ./mysql5.5
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smi
+      MYSQL_USER: wwwrun
+      MYSQL_PASSWORD: root
+    volumes:
+      - mysql:/var/lib/mysql
+
+  php:
+    build: ./php5.6
+    restart: always
+    ports:
+      - "8083:80"
+    volumes:
+      - ./php:/var/www/html
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+volumes:
+  mysql:

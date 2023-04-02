@@ -6,6 +6,7 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.old && \
 cat /dev/null > /etc/apt/sources.list
 COPY sources.list /etc/apt/sources.list
 COPY php.ini /usr/local/etc/php/php.ini
+COPY initsmi.sh /root/initsmi.sh
 RUN apt-get -y --allow-unauthenticated update && apt-get upgrade -y --allow-unauthenticated
 
 # Install tools && libraries
