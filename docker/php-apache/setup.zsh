@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-#Define color codes and icons
+# Define color codes and icons
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -20,6 +20,7 @@ SUCCESS_ICON='✅'
 FAILED_ICON='\xE2\x9D\x8C'  # red cross mark
 ERROR_ICON='\xE2\x9D\x8C'  # red cross mark
 WARNING_ICON='\xE2\x9A\xA0' # yellow warning sign
+
 # Stop and remove all Docker containers
 printf "${YELLOW}Stopping and removing all Docker containers...${NC}\n"
 docker stop $(docker ps -a -q) && \
@@ -53,11 +54,12 @@ printf "${GREEN}${SUCCESS_ICON} Successfully built the Docker image.${NC}\n\n"
 
 # Create a named volume for the PHP application files
 printf "${YELLOW}Creating a named volume for the PHP application files...${NC}\n"
-docker volume create smifile && \
+docker volume create smifiles && \
 printf "${GREEN}${SUCCESS_ICON} Successfully created a named volume for the PHP application files.${NC}\n\n"
 
 # Run the Docker container, mounting the volume to /var/www/html
-printf "${YELLOW}Running the Docker container...${NC}\n"
+# Display container status
+printf "${CYAN}${BROOM_ICON} Starting smimysql container...${NC}\n"
 docker run -p 8080:80 \
   -e MYSQL_ROOT_PASSWORD=root \
   -e MYSQL_USER=wwrun \
@@ -65,6 +67,13 @@ docker run -p 8080:80 \
   -e MYSQL_DATABASE=smi \
   --name smiphp \
   --mount type=volume,source=smifiles,target=/var/www/html \
-  smiphp && \
-printf "${GREEN}${SUCCESS_ICON} Successfully ran the Docker container.${NC}\n"
+  -d smimysql
 
+if [ $? -eq 0 ]; then
+  printf "${GREEN}${CHECK_ICON} smimysql container started successfully${NC}\n"
+else
+  printf "${RED}${STOP_ICON} Failed to start smimysql container${NC}\n"
+fi
+
+# Wait for the container to start and for the health check to complete
+printf "${CYAN}${BROOM_ICON} Waiting for the container to start${NC}\n"

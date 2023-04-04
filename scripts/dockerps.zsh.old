@@ -1,0 +1,81 @@
+#!/bin/zsh
+NETWORK_ICON='\uf1eb'  # 
+CONTAINER_ICON='\uf108'  # 
+
+VOLUME_ICON='\uf0c7'  # 
+
+# Define colors and icons
+
+# Set colors and icons
+#!/usr/bin/env zsh
+
+# Define icons and colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+NC='\033[0m'
+STOP_ICON='🛑'
+REMOVE_ICON='🗑️'
+CHECK_ICON='✔️'
+BROOM_ICON='🧹'
+TRASH_CAN_ICON='🚮'
+TRASH_ICON='🗑️'
+SUCCESS_ICON='✅'
+ERROR_ICON='❌'
+DOCKER_ICON='🐳'
+VOLUME_ICON='💾'
+NETWORK_ICON='🌐'
+RUNNING_ICON='🟢'
+STOPPED_ICON='🔴'
+CREATED_ICON='🟡'
+CPU_ICON='💻'
+MEMORY_ICON='🧠'
+IO_ICON='📈'
+
+# Display information about running Docker containers
+echo "${CYAN}Docker containers:${NC}"
+docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.RunningFor}}\t{{.Size}}\t{{.Ports}}" | awk '{if(NR>1) print}' | while read -r id name image container_status running_for size ports; do
+  if [[ "$container_status" == "Up"* ]]; then
+    container_status="${GREEN}${RUNNING_ICON} ${container_status}${NC}"
+  elif [[ "$container_status" == "Exited"* ]]; then
+    container_status="${RED}${STOPPED_ICON} ${container_status}${NC}"
+  else
+    container_status="${YELLOW}${CREATED_ICON} ${container_status}${NC}"
+  fi
+  echo "${DOCKER_ICON} ${id}: ${name} (${image}) ${container_status} ${CPU_ICON} ${running_for} ${MEMORY_ICON} ${size} ${IO_ICON} ${ports}"
+done
+
+# Display information about Docker networks
+echo "${CYAN}Docker networks:${NC}"
+docker network ls --format "table {{.ID}}\t{{.Name}}\t{{.Driver}}" | awk '{if(NR>1) print}' | while read -r id name driver; do
+  echo "${NETWORK_ICON} ${id}: ${name} (${driver})"
+done
+
+# Display information about Docker volumes
+echo "${CYAN}Docker volumes:${NC}"
+docker volume ls --format "table {{.Name}}\t{{.Driver}}\t{{.Mountpoint}}" | awk '{if(NR>1) print}' | while read -r name driver mountpoint; do
+  echo "${VOLUME_ICON} ${name} (${driver}) ${TRASH_CAN_ICON} ${REMOVE_ICON}"
+done
+
+# Display performance statistics for running Docker containers
+echo "${CYAN}Docker container performance:${NC}"
+docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}" | awk '{if(NR>1) print}' | while read -r name cpu_usage mem_usage net_io block_io; do
+  echo "${DOCKER_ICON} ${name}: ${CPU_ICON} ${cpu_usage} ${MEMORY_ICON} ${mem_usage} ${IO_ICON} ${net_io} ${IO_ICON} ${block_io}"
+done
+# Print Docker containers information
+echo -e "${CYAN}${DOCKER_ICON} Docker Containers${NC}"
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}\t{{.Ports}}" | awk -v running="${GREEN}${RUNNING_ICON} Running${NC}" -v stopped="${RED}${STOPPED_ICON} Stopped${NC}" '{gsub("Up", running, $2); gsub("Exited", stopped, $2); print}'
+
+# Print Docker networks information
+echo -e "${CYAN}${DOCKER_ICON} Docker Networks${NC}"
+docker network ls --format "table {{.Name}}\t{{.Driver}}\t{{.Scope}}"
+
+# Print Docker volumes information
+echo -e "${CYAN}${DOCKER_ICON} Docker Volumes${NC}"
+docker volume ls --format "table {{.Name}}\t{{.Driver}}\t{{.Mountpoint}}"
+
+# # Print Docker performance information
+# echo -e "${CYAN}${DOCKER_ICON} Docker Performance${NC}"
+# docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}"
+

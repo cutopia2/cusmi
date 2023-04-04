@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db:
-    build: ./mysql5.5
+    build: docker/mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -13,7 +13,7 @@ services:
       - mysql:/var/lib/mysql
 
   php:
-    build: ./php5.6
+    build: docker/php-apache
     restart: always
     ports:
       - "8083:80"

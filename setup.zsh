@@ -11,28 +11,23 @@
 # @description :                                            #
 #######################################################################
 #!/usr/bin/env zsh
+source ./scripts/init.zsh
+# Define the function
+# Define the function
+#!/bin/bash
+
+# Test the cutopia function with different options
+# cutopia -b test -o debian -a docker check
+# cutopia -b stable -o proxmox -a cutopia check
+# cutopia -b internal -o android -a cron upgrade
+# cutopia -b tmp -o termux -a codibarr clean
+# cutopia -o proxmox install
+# cutopia -b Docs -a cusmi update
+# cutopia -o android -a nextclod upgrade
+# cutopia -b pmp -o debian check
+# cutopia -b pmc -o proxmox install
 
 
+tstmkcd "app/build"
 
-
-
-while getopts ":a:b:c:" opt; do
-  case $opt in
-    a)
-      echo "Option -a with value $OPTARG"
-      ;;
-    b)
-      echo "Option -b with value $OPTARG"
-      ;;
-    c)
-      echo "Option -c with value $OPTARG"
-      ;;
-    \?)
-      echo "Invalid option: -$OPTARG" >&2
-      ;;
-    :)
-      echo "Option -$OPTARG requires an argument" >&2
-      ;;
-  esac
-done
 
