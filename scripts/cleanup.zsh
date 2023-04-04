@@ -48,7 +48,7 @@ fi
 
 #Remove backup directory
 echo "\n${TRASH_ICON} ${YELLOW}Removing backup directory...${NC}"
-if sudo rm -rf backup > /dev/null 2>&1; then
+if sudo rm -rf app/build/backup > /dev/null 2>&1; then
 echo "${SUCCESS_ICON} ${GREEN}Backup directory removed!${NC}"
 else
 echo "${FAILED_ICON} ${RED}Failed to remove backup directory!${NC}"
@@ -56,7 +56,7 @@ fi
 
 #Remove mysql directory
 echo "\n${TRASH_ICON} ${YELLOW}Removing mysql directory...${NC}"
-if sudo rm -rf mysql > /dev/null 2>&1; then
+if sudo rm -rf app/build/mysql > /dev/null 2>&1; then
 echo "${SUCCESS_ICON} ${GREEN}Mysql directory removed!${NC}"
 else
 echo "${FAILED_ICON} ${RED}Failed to remove mysql directory!${NC}"
@@ -64,7 +64,7 @@ fi
 
 #Remove php directory
 echo "\n${TRASH_ICON} ${YELLOW}Removing php directory...${NC}"
-if sudo rm -rf php > /dev/null 2>&1; then
+if sudo rm -rf app/build/php > /dev/null 2>&1; then
 echo "${SUCCESS_ICON} ${GREEN}PHP directory removed!${NC}"
 else
 echo "${FAILED_ICON} ${RED}Failed to remove php directory!${NC}"
@@ -75,7 +75,7 @@ echo "\n${TRASH_ICON} ${YELLOW}Removing app/build/* directory...${NC}"
 if sudo rm -rf app/build/ > /dev/null 2>&1; then
 echo "${SUCCESS_ICON} ${GREEN}App directory removed!${NC}"
 else
-echo "${FAILED_ICON} ${RED}Failed to remove app directory!${NC}"
+echo "${FAILED_ICON} ${RED}Failed to remove app/build directory!${NC}"
 fi
 
 #Test report

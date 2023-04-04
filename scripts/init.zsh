@@ -299,3 +299,74 @@ function tstmkcd() {
   fi
 }
 
+#######################################################################
+# @author      : AbdElHakim ZOUAI                                     #
+# @email       : (abdelhakimzouai@gmail.com)                          #
+# @ID          : (002147483647@comptez.dz)                            #
+# @Project     : cutopia Script                                       #
+# @Client      : ticenergy                                            #
+# @License     : MIT                                                  #
+# @file        : init                                                 #
+# @function    : cushow (git status -u .)                             #
+# @created     : الاثنين أفريل 03, 2023 04:45:11 CET                   #
+# @description :                                                      #
+#######################################################################
+function gitstatus() {
+    # Define colors for each status
+    local added="${GREEN}${CHECK_ICON}${NC}"
+    local modified="${YELLOW}${BROOM_ICON}${NC}"
+    local deleted="${RED}${REMOVE_ICON}${NC}"
+    local renamed="${CYAN}✚${NC}"
+    local untracked="${CYAN}${TRASH_CAN_ICON}${NC}"
+    local clean="${GREEN}${SUCCESS_ICON}${NC}"
+
+    # Define colors for each line
+    local heading="${CYAN}"
+    local added_color="${GREEN}"
+    local modified_color="${YELLOW}"
+    local deleted_color="${RED}"
+    local renamed_color="${CYAN}"
+    local untracked_color="${CYAN}"
+    local clean_color="${GREEN}"
+    local reset_color="${NC}"
+
+    # Run "git status -u .", store the output in a variable
+    local status="$(git status -u .)"
+
+    # Print out each line in the output with its status and color
+    echo "${status}" | while read line; do
+        case "${line}" in
+            "Changes to be committed:"*)
+                echo -e "\n${heading}${line}${reset_color}"
+                ;;
+            "Changes not staged for commit:"*)
+                echo -e "\n${heading}${line}${reset_color}"
+                ;;
+            "Untracked files:"*)
+                echo -e "\n${heading}${line}${reset_color}"
+                ;;
+            "no changes added to commit"*)
+                echo -e "${clean_color}${clean}${reset_color} ${line}${reset_color}"
+                ;;
+            *"$added"*)
+                echo -e "${added_color}${added}${reset_color} ${line/$added/}${renamed_color}${renamed}${reset_color}"
+                ;;
+            *"$modified"*)
+                echo -e "${modified_color}${modified}${reset_color} ${line/$modified/}${modified_color}${modified}${reset_color}"
+                ;;
+            *"$deleted"*)
+                echo -e "${deleted_color}${deleted}${reset_color} ${line/$deleted/}${modified_color}${modified}${reset_color}"
+                ;;
+            *"$renamed"*)
+                echo -e "${renamed_color}${renamed}${reset_color} ${line/$renamed/}${renamed_color}${renamed}${reset_color}"
+                ;;
+            *"$untracked"*)
+                echo -e "${untracked_color}${untracked}${reset_color} ${line/$untracked/}${modified_color}${modified}${reset_color}"
+                ;;
+            *)
+                echo "${line}"
+                ;;
+        esac
+    done
+}
+
