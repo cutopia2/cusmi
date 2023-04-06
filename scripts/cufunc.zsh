@@ -1,14 +1,14 @@
 #!/usr/bin/env sh
 #######################################################################
-# @author      : AbdElHakim ZOUAI                                             #
-# @email       : (abdelhakimzouai@gmail.com)                                          #
+# @author      : AbdElHakim ZOUAI                                     #
+# @email       : (abdelhakimzouai@gmail.com)                          #
 # @ID          : (002147483647@comptez.dz)                            #
 # @Project     : cutopia Script                                       #
 # @Client      : ticenergy                                            #
-# @License     : MIT                                          #
-# @file        : init                                             #
-# @created     : الاثنين أفريل 03, 2023 04:45:11 CET                                        #
-# @description :                                            #
+# @License     : MIT                                                  #
+# @file        : init                                                 #
+# @created     : الاثنين أفريل 03, 2023 04:45:11 CET                   #
+# @description :                                                      #
 #######################################################################
 
 # Define colors and icons
@@ -383,3 +383,212 @@ cucp() {
   echo "${BOLD}Copying ${sourceData} to ${distinData}...${NO_COLOR}"
   cp -r $sourceData $distinData && echo "${GREEN}${CHECK_ICON} Successfully copied ${sourceData} to ${distinData}.${NO_COLOR}" || { echo "${RED}${CROSS_ICON} Failed to copy ${sourceData} to ${distinData}.${NO_COLOR}"; exit 1; }
 }
+############################################################
+cumpresd() {
+  local OPTIND OPTARG
+  local input_file output_file
+  local red='\033[0;31m' green='\033[0;32m' yellow='\033[0;33m'
+  local blue='\033[0;34m' magenta='\033[0;35m' cyan='\033[0;36m' reset='\033[0m'
+  local tick='\u2713' cross='\u2717' warning='\u26A0'
+
+  while getopts ":cd" opt; do
+    case $opt in
+      c) # Compress
+        input_file=${OPTARG}
+        output_file="${input_file}.tar.gz"
+        if [ -f "${output_file}" ]; then
+          printf "${magenta}${warning}${reset} File '%s' already exists. Overwrite? (y/N) " "${output_file}"
+          read -r answer
+          [[ "${answer}" != "y" && "${answer}" != "Y" ]] && printf "${red}${cross}${reset} Compression aborted.\n" && return 1
+        fi
+        tar czf "${output_file}" "${input_file}" >/dev/null 2>&1
+        [[ $? -eq 0 ]] && printf "${green}${tick}${reset} File '%s' compressed to '%s'.\n" "${input_file}" "${output_file}" || { printf "${red}${cross}${reset} Failed to compress '%s'.\n" "${input_file}"; return 1; }
+        ;;
+      d) # Decompress
+        input_file=${OPTARG}
+        case "${input_file}" in
+          *.tar.bz2|*.tbz2) tar xvjf "${input_file}"  ;;
+          *.tar.gz|*.tgz)   tar xvzf "${input_file}"  ;;
+          *.tar.xz)         tar xvJf "${input_file}"  ;;
+          *.bz2)            bunzip2 "${input_file}"   ;;
+          *.rar)            unrar x "${input_file}"   ;;
+          *.gz)             gunzip "${input_file}"    ;;
+          *.tar)            tar xvf "${input_file}"   ;;
+          *.zip)            unzip "${input_file}"     ;;
+          *.Z)              uncompress "${input_file}" ;;
+          *.7z)             7z x "${input_file}"      ;;
+          *.xz)             unxz "${input_file}"      ;;
+          *)                printf "${red}${cross}${reset} '%s' is not a valid compressed file.\n" "${input_file}" && return 1 ;;
+        esac
+        [[ $? -eq 0 ]] && printf "${green}${tick}${reset} File '%s' decompressed.\n" "${input_file}" || { printf "${red}${cross}${reset} Failed to decompress '%s'.\n" "${input_file}"; return 1; }
+        ;;
+      \?) # Invalid option
+        printf "${red}${cross}${reset} Invalid option: '-%s'.\n" "${OPTARG}" && return 1
+        ;;
+    esac
+  done
+
+  # No option specified
+  if [ -z "${input_file}" ]; then
+    printf "${blue}${warning}${reset} Please specify a file to compress or decompress.\n" && return 1
+  fi
+}
+#########################################################################
+function cucd() {
+  builtin cd "$@" && echo -e "\033[32m\U2714\033[0m Changed directory to \033[1m$(pwd)\033[0m"
+  if [ $? -ne 0 ]; then
+    echo -e "\033[31m\U2718\033[0m Failed to change directory"
+    return 1
+  fi
+}
+#########################################################################
+# Add colors and icons to docker-compose build
+# Add colors and icons to docker-compose build
+function docker-compose-build() {
+  # Define colors and icons
+  local red='\033[0;31m'
+  local green='\033[0;32m'
+  local yellow='\033[0;33m'
+  local blue='\033[0;34m'
+  local purple='\033[0;35m'
+  local cyan='\033[0;36m'
+  local gray='\033[0;37m'
+  local reset='\033[0m'
+  local checkmark='\xE2\x9C\x93'
+  local warning='\xE2\x9A\xA0'
+  local error='\xE2\x9D\x8C'
+  local lightbulb='\xF0\x9F\x9A\xA8'
+  local rocket='\xF0\x9F\x9A\x80'
+  local hammer='\xF0\x9F\x94\xA8'
+  local star='\xE2\xAD\x90'
+
+  # Execute docker-compose build with colored output
+  docker-compose build --progress=plain \
+    | while read line; do
+        case $line in
+          *Building*)
+            echo "${purple}${rocket} $line${reset}"
+            ;;
+          *Step*)
+            echo "${cyan}${hammer} $line${reset}"
+            ;;
+          *Pulling*)
+            echo "${gray}${lightbulb} $line${reset}"
+            ;;
+          *Successfully*)
+            echo "${green}${checkmark} $line${reset}"
+            ;;
+          *Complete*)
+            echo "${blue}${star} $line${reset}"
+            ;;
+          *Warning*)
+            echo "${yellow}${warning} $line${reset}"
+            ;;
+          *ERROR*)
+            echo "${red}${error} $line${reset}"
+            ;;
+          *)
+            echo "${line}"
+            ;;
+        esac
+      done
+
+  # Print report of errors and warnings
+  local error_count=$(docker-compose build --quiet-pull --no-cache | grep -c "^ERROR")
+  local warning_count=$(docker-compose build --quiet-pull --no-cache | grep -c "^Warning")
+  if [ $error_count -gt 0 ] || [ $warning_count -gt 0 ]; then
+    echo "${red}${error_count} errors, ${yellow}${warning_count} warnings${reset}"
+    docker-compose build --quiet-pull --no-cache \
+      | while read line; do
+          case $line in
+            *ERROR*)
+              echo "${red}${error} $line${reset}"
+              ;;
+            *Warning*)
+              echo "${yellow}${warning} $line${reset}"
+              ;;
+            *)
+              echo "${line}"
+              ;;
+          esac
+        done
+  else
+    echo "${green}${checkmark} No errors or warnings${reset}"
+  fi
+}
+#################################################################
+function docker-compose-up() {
+  local green='\033[0;32m'
+  local yellow='\033[0;33m'
+  local cyan='\033[0;36m'
+  local red='\033[0;31m'
+  local reset='\033[0m'
+  local bold='\033[1m'
+  local italic='\033[3m'
+  local underline='\033[4m'
+  
+  echo -e "${yellow}┌──────────────────────────────────────────┐${reset}"
+  echo -e "${cyan}        🚀 Starting docker-compose...${reset}"
+  echo -e "${yellow}└──────────────────────────────────────────┘${reset}\n"
+
+
+  docker-compose up -d | while read line; do
+    case $line in
+      *"Creating"* )
+        container=$(echo "$line" | cut -d' ' -f2)
+        service=$(echo "$container" | cut -d'_' -f1)
+        echo -e "${green}✔ ${reset}${cyan}$service${reset} ${green}Creating${reset} ${yellow}$container${reset}"
+        ;;
+      *"Starting"* )
+        container=$(echo "$line" | cut -d' ' -f2)
+        service=$(echo "$container" | cut -d'_' -f1)
+        echo -e "${green}✔ ${reset}${cyan}$service${reset} ${green}Starting${reset} ${yellow}$container${reset}"
+        ;;
+      *"Attaching to"* )
+        container=$(echo "$line" | cut -d' ' -f3)
+        service=$(echo "$container" | cut -d'_' -f1)
+        echo -e "${cyan}🐳 ${reset}${cyan}$service${reset} ${yellow}Attached to${reset} ${yellow}$container${reset}"
+        ;;
+      *"exited with code"* )
+        container=$(echo "$line" | cut -d' ' -f1 | tr -d ':')
+        service=$(echo "$container" | cut -d'_' -f1)
+        echo -e "${red}✘ ${reset}${cyan}$service${reset} ${red}Stopped${reset} ${yellow}$container${reset}"
+        ;;
+      *"ERROR"* )
+        echo -e "${red}🛑 ${reset}$line"
+        ;;
+      *"Step"* )
+        step=$(echo "$line" | sed -e 's/^.*Step/Step/' -e 's/:$//' -e 's/\.$//')
+        echo -e "${cyan}👉 ${reset}${cyan}${step}${reset}"
+        ;;
+      *"apt-get"* )
+        echo -e "${italic}${yellow}➜ ${reset}${italic}${line}${reset}"
+        ;;
+      * )
+        echo -e "${yellow}➜ ${reset}$line"
+        ;;
+    esac
+  done
+
+  echo -e "${yellow}┌──────────────────────────────────────────────────────┐${reset}"
+  echo -e "          ${cyan}🎉 All containers are up and running!${reset}"
+  echo -e "${yellow}└──────────────────────────────────────────────────────┘${reset}\n"
+}
+#######################################################################
+function create_startup_folder_structure() {
+  mkdir -p \
+    "Company information" \
+    "Finance" \
+    "Human resources" \
+    "Marketing" \
+    "Operations" \
+    "Client projects" \
+    "Internal projects" \
+    "Administration" \
+    "IT" \
+    "Legal" \
+    "Sales" \
+    "Country folders"
+}
+######################################################################
+

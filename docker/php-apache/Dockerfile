@@ -6,22 +6,29 @@ RUN cp /etc/apt/sources.list /etc/apt/sources.list.old && \
 cat /dev/null > /etc/apt/sources.list
 COPY sources.list /etc/apt/sources.list
 COPY php.ini /usr/local/etc/php/php.ini
-COPY initsmi.sh /root/initsmi.sh
-RUN apt-get -y --allow-unauthenticated update && apt-get upgrade -y --allow-unauthenticated
+
+
+
+
+RUN apt-get update -y --allow-unauthenticated
+RUN apt-get upgrade -y --allow-unauthenticated
 
 # Install tools && libraries
-RUN apt-get update && \
-    apt-get -y install vim wget dialog build-essential git curl libcurl3 libcurl3-dev zip \
+RUN apt-get -y install --fix-missing --allow-unauthenticated vim wget dialog build-essential git curl libcurl3 libcurl3-dev zip \
     libmcrypt-dev libsqlite3-dev libsqlite3-0 mysql-client zlib1g-dev libicu-dev \
     libfreetype6-dev libjpeg62-turbo-dev libpng-dev libapache2-mod-rpaf \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y \
-    libcurl4-openssl-dev \
+    libcurl4-openssl-dev php-mysql \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
     && rm -rf /var/lib/apt/lists/*
+
+
+
+
+
+COPY initsmi.sh /root/initsmi.sh
+RUN sh /root/initsmi.sh
 
 # PHP5 Extensions
 #docker-php-ext-install curl \
@@ -51,7 +58,9 @@ RUN pecl install xdebug-2.4.0RC4 && docker-php-ext-enable xdebug \
 # Insure an SSL directory exists
 RUN mkdir -p /etc/apache2/ssl
 
-RUN sh /root/initsmi.sh
+#!/bin/bash
+
+# Define the missing keys
 # Enable SSL support
 RUN a2enmod ssl && a2enmod rewrite
 

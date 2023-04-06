@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   db:
-    build: docker/mysql
+    build: ./docker/mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -13,12 +13,12 @@ services:
       - mysql:/var/lib/mysql
 
   php:
-    build: docker/php-apache
+    build: ./docker/php-apache
     restart: always
     ports:
       - "8083:80"
     volumes:
-      - ./php:/var/www/html
+      - ./app/build/:/var/www/html
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

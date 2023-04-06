@@ -11,7 +11,7 @@
 # @description :                                                      #
 #######################################################################
 #!/usr/bin/env zsh
-source ./scripts/init.zsh
+source ./scripts/cufunc.zsh
 # Define the function
 # Define the function
 #!/bin/bash
@@ -47,44 +47,51 @@ NO_COLOR='\033[0m'
 CHECK_ICON='\xE2\x9C\x94'
 CROSS_ICON='\xE2\x9D\x8C'
 
+
+
+source scripts/checks.zsh
 source scripts/cleanup.zsh
 
+
+
+########################################################################################
+########################################################################################
+# cd ../../../
 # Create app/build directory
-echo "${BOLD}Creating app/build directory...${NO_COLOR}"
-mkdir -p app/build && echo "${GREEN}${CHECK_ICON} Successfully created app/build directory.${NO_COLOR}" || { echo "${RED}${CROSS_ICON} Failed to create app/build directory.${NO_COLOR}"; exit 1; }
-
-
-
+cumkdir app/build
 # Create app/build/backup directory
-echo "${BOLD}Creating app/build/backup directory...${NO_COLOR}"
-mkdir -p app/build/backup && echo "${GREEN}${CHECK_ICON} Successfully created app/build/backup directory.${NO_COLOR}" || { echo "${RED}${CROSS_ICON} Failed to create app/build directory.${NO_COLOR}"; exit 1; }
-
-
-# Create app/build/backup directory
-echo "${BOLD}Creating app/build/mysql directory...${NO_COLOR}"
-mkdir -p app/build/mysql && echo "${GREEN}${CHECK_ICON} Successfully created app/build/mysql directory.${NO_COLOR}" || { echo "${RED}${CROSS_ICON} Failed to create app/build directory.${NO_COLOR}"; exit 1; }
-
-
+cumkdir app/build/backup 
 # Copy app/src/php to app/build
-echo "${BOLD}Copying app/src/php to app/build...${NO_COLOR}"
-cp -r app/src/php app/build && echo "${GREEN}${CHECK_ICON} Successfully copied app/src/php to app/build.${NO_COLOR}" || { echo "${RED}${CROSS_ICON} Failed to copy app/src/php to app/build.${NO_COLOR}"; exit 1; }
+cucp -s app/src/php -d app/build
+# Change directory to root smi app directory
+cumkdir app/build/smi
+# mkdir app/build/smi
+ls -lahr app/build/smi
 
-# Create app/build/smi directory
-echo "${BOLD}Creating app/build/smi directory...${NO_COLOR}"
-mkdir -p app/build/smi && echo "${GREEN}${CHECK_ICON} Successfully created app/build/smi directory.${NO_COLOR}" || { echo "${RED}${CROSS_ICON} Failed to create app/build/smi directory.${NO_COLOR}"; exit 1; }
-
+pwd
+pwd
+pwd
+pwd
 # Copy app/src/smi_1.0.6.zip to app/build/smi
-echo "${BOLD}Copying app/src/smi_1.0.6.zip to app/build/smi...${NO_COLOR}"
-cp app/src/smi_1.0.6.zip app/build/smi/ && echo "${GREEN}${CHECK_ICON} Successfully copied app/src/smi_1.0.6.zip to app/build/smi.${NO_COLOR}" || { echo "${RED}${CROSS_ICON} Failed to copy app/src/smi_1.0.6.zip to app/build/smi.${NO_COLOR}"; exit 1; }
-
-# Unzip smi_1.0.6.zip in app/build/smi directory
-echo "${BOLD}Unzipping smi_1.0.6.zip in app/build/smi directory...${NO_COLOR}"
-cd app/build/smi/ && unzip -q smi_1.0.6.zip && echo "${GREEN}${CHECK_ICON} Successfully unzipped smi_1.0.6.zip.${NO_COLOR}" || { echo "${RED}${CROSS_ICON} Failed to unzip smi_1.0.6.zip.${NO_COLOR}"; exit 1; }
-
-########################################################################################
-########################################################################################
+cucp -s app/src/smi_1.0.6.zip -d app/build/smi/
+pwd
+cucd app/build/smi/
+# unzip smi_1.0.6.zip
+# cumpresd -d smi_1.0.6.zip
+unzip smi_1.0.6.zip
 cd ../../../
-source scripts/checks.zsh
+cucp -s app/src/prm.inc.php -d app/build/smi/inc/
+docker-compose-build
+docker-compose-up
+
+brave-browser http://0.0.0.0:8083/smi/index.php
+
+
+
+
+
+
+
 pwd
 pwd
 ########################################################################################
